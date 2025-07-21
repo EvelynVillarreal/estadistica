@@ -226,3 +226,5 @@ Proy = Beta_0 + Beta_1*x
 Proy
 
 points(x, Proy,col=2)
+resid=y - Proy
+resid
