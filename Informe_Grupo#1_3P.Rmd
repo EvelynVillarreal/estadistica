@@ -1,0 +1,354 @@
+---
+title: "Informe Segundo Parcial - Estadística"
+author: "Grupo 1 - Análisis de Videojuegos"
+date: "`r Sys.Date()`"
+output: html_document
+---
+```{r setup, include=FALSE}
+videojuegos <- read.csv("BDD_G1.csv", stringsAsFactors = FALSE)
+```
+# Análisis de Ventas de Videojuegos con Calificaciones
+
+## Integrantes del grupo
+
+- Christian Almache
+- Milena Baraja
+- Stalin Uvidia
+- Evelyn Villarreal
+
+## Introducción
+
+El presente informe documenta el desarrollo de la práctica grupal correspondiente al primer parcial del curso. Esta práctica tuvo como objetivo aplicar conceptos fundamentales de estadística descriptiva e inferencial mediante una aplicación interactiva desarrollada con **Shiny** en R.
+
+Partiendo de una versión inicial de la aplicación, se incorporaron todas las modificaciones planteadas durante la presentación del primer parcial. Entre los cambios más importantes se destacan: la reorganización de la interfaz utilizando `shinydashboard`, la separación lógica del análisis en secciones (exploración univariada, bivariada e inferencial), la limpieza y preparación de los datos, y una mejora significativa en la experiencia visual y funcional para el usuario.
+
+Adicionalmente, se implementaron elementos de **estadística inferencial**, que incluyen:
+
+- Intervalo de confianza (IC) para una media.
+- Intervalo de confianza para una proporción.
+- Intervalo de confianza para la diferencia de medias (independientes).
+- Intervalo de confianza para la diferencia de proporciones.
+- Prueba de hipótesis (PH) para una media.
+- Prueba de hipótesis para una proporción.
+
+Todos estos elementos se integraron de acuerdo con los objetivos del análisis, asegurando su pertinencia y correcta interpretación estadística.
+
+El análisis se desarrolló sobre una base de datos de videojuegos, abordando diversas variables cuantitativas y cualitativas con el fin de explorar patrones de comportamiento, realizar comparaciones y validar hipótesis estadísticas.
+
+En las siguientes secciones, se describen detalladamente los procedimientos seguidos, las funcionalidades implementadas y los resultados obtenidos, complementando el análisis con interpretaciones, conclusiones y referencias conforme al formato académico requerido.
+
+## Descripción del Dataset
+
+El dataset “Video Game Sales with Ratings” contiene información sobre videojuegos publicados en distintas plataformas. Entre las variables disponibles se encuentran:
+
+- Nombre del videojuego
+- Género
+- Plataforma
+- Año de lanzamiento
+- Ventas globales (en millones de unidades)
+- Calificaciones de Metacritic
+
+## Preparación de Datos
+
+Para asegurar la calidad del análisis, se realizaron diversas tareas de limpieza y transformación sobre el conjunto de datos original:
+
+- Se cargó el dataset desde un archivo CSV.
+- Se eliminaron los registros con valores faltantes en las variables clave `Global_Sales` y `Metascore`.
+- Se removieron registros con campos vacíos en las variables categóricas `Genre` y `Platform`.
+- Se convirtió la variable `Year_of_Release` a tipo numérico, facilitando el filtrado por rango de años.
+- Se filtraron únicamente los videojuegos lanzados entre los años 2000 y 2020, asegurando relevancia temporal en el análisis.
+
+Estas acciones permitieron trabajar con un conjunto de datos limpio, coherente y adecuado para los objetivos del estudio.
+
+## Cambios realizados en la aplicación Shiny
+
+Se realizaron las siguientes modificaciones en la aplicación Shiny para cumplir con los requerimientos del trabajo:
+
+- Se implementó la interfaz usando `shinydashboard` para mejorar la organización y navegación del usuario.
+- Se incorporó la limpieza y depuración de datos numéricos para asegurar análisis correctos.
+- Se agregó una sección de Introducción con el diccionario de variables, describiendo las columnas del conjunto de datos.
+- Se desarrollaron análisis univariados con histogramas, boxplots, medidas descriptivas y agrupación por variables categóricas.
+- Se incorporó un módulo de análisis bivariado con gráficos de dispersión, línea de regresión y coeficiente de correlación.
+- Se implementaron intervalos de confianza y pruebas de hipótesis para medias y proporciones, incluyendo diferencias, con selección dinámica y resultados interpretados.
+- Se añadió texto interpretativo para cada análisis, facilitando la comprensión de resultados por parte del usuario.
+
+Estas modificaciones aseguran que la aplicación cubra todas las actividades solicitadas, integrando análisis descriptivos e inferenciales en una plataforma amigable y funcional.
+
+
+## Análisis Estadístico 
+
+El análisis estadístico constituye la parte central de este trabajo, ya que permite transformar los datos en información útil mediante herramientas cuantitativas. A través de él, es posible explorar la estructura de los datos, identificar patrones relevantes, formular y validar hipótesis, y tomar decisiones fundamentadas.
+
+En este proyecto, el análisis se ha dividido en dos grandes componentes:
+
+- **Análisis descriptivo:** proporciona una visión general del comportamiento de las variables, utilizando medidas estadísticas y visualizaciones gráficas que resumen la información contenida en el conjunto de datos.
+  
+- **Análisis inferencial:** permite hacer estimaciones y validar hipótesis estadísticas con base en la información muestral, incorporando el cálculo de intervalos de confianza y la ejecución de pruebas de hipótesis tanto para medias como para proporciones.
+
+Ambos componentes están integrados en la aplicación desarrollada en `Shiny`, y se describen detalladamente a continuación.
+
+## Análisis Descriptivo
+
+El análisis descriptivo permite conocer la estructura básica del conjunto de datos, facilitando la identificación de patrones, tendencias y posibles valores atípicos. En esta etapa se utilizaron herramientas gráficas y numéricas para resumir tanto variables cuantitativas (como ventas globales y calificaciones) como cualitativas (género y plataforma).
+
+Entre las principales técnicas aplicadas se encuentran: histogramas, boxplots, tablas de frecuencia, medidas de tendencia central (media, mediana), medidas de dispersión (rango, desviación estándar), y medidas de forma (asimetría, curtosis).
+
+A continuación, se describe el análisis mediante intervalos de confianza como parte del resumen estadístico inferencial preliminar.
+
+### Intervalos de Confianza (IC)
+
+Los **intervalos de confianza** son rangos estimados que permiten inferir con cierto nivel de certeza el valor de un parámetro poblacional (como la media o proporción) a partir de una muestra. En este proyecto se calcularon diferentes tipos de intervalos según el tipo de variable y objetivo del análisis.
+
+Cada intervalo fue implementado de forma dinámica en la aplicación `Shiny`, permitiendo al usuario elegir el tipo de análisis, la variable, y el nivel de confianza deseado.
+
+#### IC para una media
+
+Se utilizó la fórmula del intervalo de confianza para la media con desviación estándar muestral conocida:
+
+```{r}
+# Cálculo ejemplo: IC para Global_Sales
+muestra <- videojuegos$Global_Sales[!is.na(videojuegos$Global_Sales)]
+nivel_conf <- 0.95
+n <- length(muestra)
+media <- mean(muestra)
+error <- qnorm(1 - (1 - nivel_conf)/2) * sd(muestra)/sqrt(n)
+LI <- media - error
+LS <- media + error
+cat("IC para la media de Global_Sales al 95%: [", round(LI,2), ",", round(LS,2), "]")
+```
+
+#### IC para una proporción
+
+Se estimó una proporción considerando como “éxito” que el puntaje crítico sea mayor al promedio:
+```{r}
+p <- mean(videojuegos$Critic_Score > mean(videojuegos$Critic_Score, na.rm = TRUE), na.rm = TRUE)
+n <- sum(!is.na(videojuegos$Critic_Score))
+error <- qnorm(0.975) * sqrt(p*(1 - p)/n)
+cat("IC para una proporción al 95%:", round(p - error, 3), ",", round(p + error, 3))
+```
+
+#### IC para una proporción
+
+Se compararon dos variables cuantitativas, por ejemplo Global_Sales y Critic_Score, para evaluar si hay una diferencia significativa entre sus medias:
+```{r}
+x <- videojuegos$Global_Sales
+y <- videojuegos$Critic_Score
+tt <- t.test(x, y)
+
+```
+
+#### IC para diferencia de proporciones
+
+Se calculó la diferencia entre proporciones de dos grupos definidos sobre variables cuantitativas binarizadas:
+```{r}
+x <- videojuegos$Global_Sales
+y <- videojuegos$Critic_Score
+
+# Proporción de valores mayores al promedio
+p1 <- mean(x > mean(x, na.rm = TRUE), na.rm = TRUE)
+p2 <- mean(y > mean(y, na.rm = TRUE), na.rm = TRUE)
+
+# Tamaño de cada muestra
+n1 <- sum(!is.na(x))
+n2 <- sum(!is.na(y))
+
+# Diferencia de proporciones
+diff <- p1 - p2
+
+# Error estándar y margen de error
+se <- sqrt(p1*(1 - p1)/n1 + p2*(1 - p2)/n2)
+error <- qnorm(0.975) * se
+
+# Intervalo de confianza
+cat("IC para diferencia de proporciones al 95%:", round(diff - error, 3), ",", round(diff + error, 3))
+
+```
+
+###Visualización del IC
+
+A modo ilustrativo, se presenta un gráfico de una distribución normal con sombreado del intervalo de confianza de la media:
+```{r}
+media <- mean(videojuegos$Global_Sales, na.rm = TRUE)
+sd_x <- sd(videojuegos$Global_Sales, na.rm = TRUE)
+n <- sum(!is.na(videojuegos$Global_Sales))
+error <- qnorm(0.975) * sd_x / sqrt(n)
+LI <- media - error
+LS <- media + error
+
+df <- data.frame(x = seq(media - 4*sd_x, media + 4*sd_x, length.out = 200))
+df$y <- dnorm(df$x, mean = media, sd = sd_x)
+
+library(ggplot2)
+ggplot(df, aes(x, y)) +
+  geom_line(color = "steelblue") +
+  geom_area(data = subset(df, x >= LI & x <= LS), aes(x, y), fill = "lightblue") +
+  labs(title = "Distribución Normal y IC al 95%",
+       x = "Ventas Globales", y = "Densidad")
+
+```
+
+### Pruebas de Hipótesis (PH)
+
+En esta sección se aplican pruebas de hipótesis con el objetivo de estimar parámetros poblacionales y contrastar suposiciones estadísticas relacionadas con las ventas y calificaciones de videojuegos. Las pruebas se ejecutan de forma interactiva en la aplicación Shiny, donde el usuario puede seleccionar variables específicas y, cuando corresponde, comparar dos grupos distintos (por ejemplo, plataformas o géneros). 
+
+#### PH para una media o diferencia de medias
+
+Las pruebas sobre medias se realizaron utilizando el test t de Student, bajo diferentes escenarios:
+
+#### Prueba de hipótesis para una media
+
+Se analiza si el promedio de una variable (por ejemplo, el puntaje crítico) difiere significativamente de un valor de referencia.
+
+- **Ejemplo:** Puntaje promedio de los críticos (`Critic_Score`)
+- **Hipótesis nula (H₀):** μ = μ₀ (por defecto, el software evalúa contra μ₀ = media hipotética)
+- **Hipótesis alternativa (H₁):** μ ≠ μ₀
+- **Nivel de significancia:** α = 0.05  
+
+Se aplica automáticamente una prueba `t.test()` a la variable seleccionada. Se devuelve el valor del estadístico t, el valor-p, y una interpretación del resultado, concluyendo si se rechaza o no la hipótesis nula.
+
+#### Prueba de hipótesis para diferencia de medias
+
+Se comparan dos subconjuntos de una variable (por ejemplo, ventas globales entre dos plataformas como PS4 y XOne).
+
+- **Hipótesis nula (H₀):** μ₁ - μ₂ = 0  
+- **Hipótesis alternativa (H₁):** μ₁ - μ₂ ≠ 0  
+
+El usuario selecciona las variables que identifican cada grupo. Se realiza un `t.test()` para muestras independientes. La aplicación entrega el intervalo de confianza de la diferencia, el valor del estadístico y el valor-p correspondiente.
+
+---
+
+#### PH para una proporción o diferencia de proporciones
+
+En esta sección se realizan pruebas de hipótesis relacionadas con proporciones, con base en la frecuencia relativa de casos que superan el valor medio de la variable seleccionada. Esto significa que se evalúa qué proporción de observaciones tienen un valor superior a la media del grupo, lo cual se interpreta como una “condición de éxito”.
+
+#### Prueba de hipótesis para una proporción
+
+Se evalúa si la proporción de “éxito” (valores mayores que la media) es significativamente distinta de 0.5.
+
+- **Hipótesis nula (H₀):** p = 0.5  
+- **Hipótesis alternativa (H₁):** p > 0.5  
+
+Se aplica la prueba de proporciones (`prop.test()`) que internamente utiliza una prueba de chi-cuadrado con corrección de continuidad. La aplicación retorna el valor del estadístico, el valor-p y una interpretación de la conclusión al 5% de significancia.
+
+#### Prueba de hipótesis para diferencia de proporciones
+
+Se comparan dos proporciones de éxito entre dos grupos diferentes (por ejemplo, videojuegos de género "Action" vs. "Shooter").
+
+- **Hipótesis nula (H₀):** p₁ - p₂ = 0  
+- **Hipótesis alternativa (H₁):** p₁ - p₂ ≠ 0  
+
+El cálculo se realiza mediante la estimación de las proporciones relativas al promedio de cada grupo y una fórmula de error estándar para diferencias de proporciones. Se entrega el intervalo de confianza para la diferencia entre proporciones.
+
+#### Relación con el código de la aplicación Shiny
+
+La implementación de las pruebas de hipótesis en la aplicación Shiny se realiza mediante un bloque `observeEvent(input$calcular, { ... })`, el cual se activa cuando el usuario presiona el botón de cálculo. A continuación se detalla cómo se ejecutan los distintos tipos de pruebas inferenciales según la opción seleccionada:
+
+#### Pruebas sobre medias
+
+El código identifica el tipo de prueba elegida (`tipo <- input$tipo_inferencia`) y extrae la variable seleccionada (`g1 <- data[[input$grupo1]]`). Luego:
+
+- Si el usuario selecciona **“PH para media”**, se aplica `t.test(g1)` para realizar una prueba t sobre una media poblacional. Se devuelve:
+  - El estadístico t (`ttest$statistic`)
+  - El valor-p (`ttest$p.value`)
+  - Una conclusión interpretativa automática según si el valor-p es menor a 0.05.
+
+- Para **“IC diferencia de medias”**, se extrae un segundo grupo (`g2`) y se aplica `t.test(g1, g2)`. El intervalo de confianza de la diferencia se obtiene desde `ttest$conf.int`.
+
+#### Pruebas sobre proporciones
+
+Como las variables no son categóricas binarias, el código convierte internamente cada valor en “éxito” si es mayor que la media de su grupo:
+
+```{r}
+g1 <- videojuegos$Global_Sales
+mean(g1 > mean(g1, na.rm = TRUE), na.rm = TRUE)
+```
+## Análisis de Regresión Lineal
+
+La regresión lineal es una técnica estadística utilizada para modelar la relación entre una variable dependiente \( Y \) y una o más variables independientes \( X \). En nuestro caso, aplicamos *regresión lineal simple* para analizar si existe relación entre el puntaje crítico de los videojuegos y sus ventas globales.
+
+### Código en R
+```{r}
+
+# Cargar datos
+
+datos <- read.csv("BDD_G1.csv")
+
+
+
+# Ajustar el modelo de regresión lineal
+
+modelo <- lm(Global_Sales ~ Critic_Score, data = datos)
+
+
+
+# Mostrar resumen del modelo
+
+summary(modelo)
+
+
+
+# Graficar dispersión y recta de regresión
+
+plot(datos$Critic_Score, datos$Global_Sales,
+
+     main = "Regresión Lineal: Ventas vs Puntaje Crítico",
+
+     xlab = "Puntaje Crítico",
+
+     ylab = "Ventas Globales (millones)",
+
+     pch = 19, col = "blue")
+
+abline(modelo, col = "red", lwd = 2)
+```
+
+## Interpretación de Resultados
+
+Los análisis inferenciales realizados en la aplicación Shiny permiten extraer conclusiones estadísticas significativas con base en datos reales de videojuegos. Las pruebas para medias evidenciaron si ciertas variables como el Critic_Score o Global_Sales se comportan conforme a expectativas de mercado o si existen diferencias sustanciales entre plataformas o géneros.
+
+En cuanto a las proporciones, el enfoque adoptado (evaluar si los valores están por encima del promedio) permitió detectar patrones de rendimiento relativo dentro de distintos grupos. Si bien esto proporciona información útil sobre la distribución interna de los datos, se recomienda interpretar los resultados con precaución, ya que no se evalúan proporciones absolutas como “mayores a 8 puntos”, sino condiciones relativas a la propia muestra.
+
+Además, los resultados pueden estar influenciados por el tamaño de muestra, la presencia de valores atípicos y el sesgo en la distribución de los datos, por lo que toda inferencia debe ser considerada en su contexto.
+
+Ademas en el modelo de regreción lineal provee la estimación de los coeficientes:
+
+- Intercepto \(\hat{\beta}_0\): representa las ventas globales estimadas cuando el puntaje crítico es cero.
+
+- Pendiente \(\hat{\beta}_1\): indica el cambio esperado en ventas por cada punto adicional en el puntaje crítico.
+
+Por ejemplo, si \(\hat{\beta}_1 = 0.15\), significa que por cada aumento de 1 punto en el puntaje crítico, se espera un incremento promedio de 0.15 millones en ventas globales.
+
+Además, el coeficiente de determinación \(R^2\) indica la proporción de la variabilidad en las ventas que es explicada por el puntaje crítico. Valores cercanos a 1 sugieren un buen ajuste, mientras que valores bajos indican que otros factores pueden estar influyendo más en las ventas.
+
+La significancia estadística de los coeficientes se evalúa mediante valores \(p\). Un valor \(p < 0.05\) indica que el coeficiente es significativamente diferente de cero, respaldando que la variable independiente tiene un efecto significativo en la variable dependiente.
+
+---
+
+Esta regresión lineal simple permite entender la relación lineal entre la valoración crítica y el éxito comercial medido en ventas globales, sirviendo de base para análisis más complejos o modelos multivariados.
+## Conclusiones
+
+La práctica permitió integrar herramientas de estadística descriptiva e inferencial en un entorno interactivo mediante el uso de la plataforma **Shiny**. El análisis se apoyó en una base de datos de videojuegos, lo que permitió desarrollar un conjunto completo de funcionalidades aplicables a variables reales y diversas, tanto cuantitativas como cualitativas.
+
+A lo largo del trabajo se lograron los siguientes objetivos:
+
+- Se construyó una aplicación Shiny robusta, organizada con `shinydashboard`, que permite realizar análisis univariados, bivariados e inferenciales de forma dinámica, intuitiva y guiada para el usuario.
+- Se realizaron **intervalos de confianza** para estimar parámetros poblacionales como medias y proporciones, así como diferencias entre grupos. Estos intervalos se calcularon utilizando las fórmulas teóricas correspondientes y se ilustraron mediante gráficos en algunos casos.
+- Se implementaron **pruebas de hipótesis** para medias y proporciones, lo que permitió contrastar afirmaciones estadísticas sobre el comportamiento de variables como las ventas globales y los puntajes de crítica. Se compararon además subgrupos definidos por género o plataforma, identificando diferencias significativas cuando existieron.
+- La lógica estadística detrás de los análisis se encuentra claramente implementada en el código del servidor, permitiendo replicabilidad y claridad. El uso de condiciones como "mayor que la media" para construir proporciones comparables fue una decisión funcional que permite evaluar tendencias relativas dentro de los datos.
+
+En términos de resultados, el análisis mostró que existen diferencias importantes entre ciertas plataformas y géneros de videojuegos, tanto en términos de ventas como de calificaciones. El uso de estadísticas inferenciales permitió validar cuantitativamente estas diferencias, ofreciendo herramientas sólidas para el análisis de mercado o desarrollo estratégico.
+
+En resumen, el trabajo cumplió con los objetivos propuestos, integrando conceptos teóricos con herramientas computacionales prácticas, y produciendo una aplicación interactiva útil tanto para análisis exploratorio como para la toma de decisiones basada en datos.
+
+## Referencias
+
+Montgomery, D. C., & Runger, G. C. (2018). Estadística Aplicada y Probabilidad para Ingenieros. Cengage Learning.
+
+Navidi, W. (2021). Estadística para Ingenieros y Científicos. McGraw-Hill.
+
+Wickham, H., & Grolemund, G. (2016). R for Data Science. O’Reilly Media.
+
+R Core Team. (2024). R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing.
+
+RStudio Team. (2024). Shiny: Web Application Framework for R. https://shiny.rstudio.com
+
